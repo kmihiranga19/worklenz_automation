@@ -1,3 +1,4 @@
+import random
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -51,7 +52,12 @@ def add_team_member():
     enter_job_title = wait.until(EC.visibility_of_element_located((By.XPATH,
                                                                    "//div[@id='cdk-overlay-0']/div/div[2]/div/div/div[2]/nz-spin/div/form/worklenz-job-titles-autocomplete/form/nz-form-item/nz-form-control/div/div/input")))
     enter_job_title.send_keys("Software engineer", Keys.ENTER)
-# //div[@id='cdk-overlay-0']/div/div[2]/div/div/div[2]/nz-spin/div/form/nz-form-item[2]/nz-form-control/div/div/nz-select/nz-select-top-control/nz-select-item
+    click_access = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@id='cdk-overlay-0']/div/div[2]/div/div/div[2]/nz-spin/div/form/nz-form-item[2]/nz-form-control/div/div/nz-select/nz-select-top-control/nz-select-item")))
+    click_access.click()
+    dropdown = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "ant-select-dropdown")))
+    selects = dropdown.find_elements(By.CLASS_NAME, "ant-select-item")
+    no = random.randint(0, 1)
+    selects[no].click()
 
 
 main()
