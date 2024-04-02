@@ -10,7 +10,7 @@ from faker import Faker
 options = webdriver.ChromeOptions()
 options.add_experimental_option("detach", True)
 driver = webdriver.Chrome(options=options)
-wait = WebDriverWait(driver, 10)
+wait = WebDriverWait(driver, 20)
 fake = Faker()
 
 driver.get("https://uat.app.worklenz.com/auth")
@@ -52,14 +52,26 @@ def add_team_member():
     enter_job_title = wait.until(EC.visibility_of_element_located((By.XPATH,
                                                                    "//div[@id='cdk-overlay-0']/div/div[2]/div/div/div[2]/nz-spin/div/form/worklenz-job-titles-autocomplete/form/nz-form-item/nz-form-control/div/div/input")))
     enter_job_title.send_keys("Software engineer", Keys.ENTER)
-    click_access = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@id='cdk-overlay-0']/div/div[2]/div/div/div[2]/nz-spin/div/form/nz-form-item[2]/nz-form-control/div/div/nz-select/nz-select-top-control/nz-select-item")))
+    click_access = wait.until(EC.visibility_of_element_located((By.XPATH,
+                                                                "//div[@id='cdk-overlay-0']/div/div[2]/div/div/div[2]/nz-spin/div/form/nz-form-item[2]/nz-form-control/div/div/nz-select/nz-select-top-control/nz-select-item")))
     click_access.click()
-    dropdown = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "ant-select-dropdown")))
-    selects = dropdown.find_elements(By.CLASS_NAME, "ant-select-item")
+    time.sleep(1)
+    dropdown = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "nz-option-container")))
+    selects = dropdown.find_elements(By.TAG_NAME, "nz-option-item")
     no = random.randint(0, 1)
     selects[no].click()
+    wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='Add to team']"))).click()
+    time.sleep(6)
+
+
+def go_to_team_members_list():
+    wait.until(EC.visibility_of_element_located((By.XPATH, "//li[5]"))).click()
+    profile_details = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "profile-details-dropdown")))
+    profile_details_wait = WebDriverWait(profile_details, 10)
+    profile_details_wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, "li")))[1].click()
 
 
 main()
 header_team_invite_btn()
 add_team_member()
+go_to_team_members_list()
