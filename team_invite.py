@@ -60,6 +60,8 @@ def add_team_member():
     wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='Add to team']"))).click()
     time.sleep(6)
 
+    return random_email
+
 
 def go_to_team_members_list():
     wait.until(EC.visibility_of_element_located((By.XPATH, "//li[5]"))).click()
@@ -72,15 +74,17 @@ def go_to_team_members_list():
 
 
 def team_members_list():
+    members_list = []
     t_body = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "tbody")))
     t_body_wait = WebDriverWait(t_body, 10)
     rows = t_body_wait.until(EC.visibility_of_all_elements_located((By.TAG_NAME, "tr")))
     for row in rows:
+        email = ''
         row_wait = WebDriverWait(row, 10)
         need_column = row_wait.until(EC.visibility_of_all_elements_located((By.TAG_NAME, "td")))[2]
         need_column_wait = WebDriverWait(need_column, 10)
         span = need_column_wait.until(EC.visibility_of_element_located((By.TAG_NAME, "span")))
-        time.sleep(3)
+        time.sleep(2)
         small_tag_present = False
         try:
             small_tag = span.find_element(By.TAG_NAME, "small")
@@ -94,20 +98,26 @@ def team_members_list():
             outer_text = span.text.strip()
             inner_text = small_tag.text.strip()
             final_text = outer_text.replace(inner_text, "").strip()
-            print(final_text)
+            email = final_text
 
         else:
-            print(span.text.strip())
+            email = span.text.strip()
 
-        
-
-
-
+        members_list.append(email)
         time.sleep(1)
+
+    return members_list
+
+
+def check_invited_member_add_to_list(inv_member, members_list):
+    for member_list in members_list:
+        if inv_member == member_list:
+            print(f"Successfully '{inv_member}' member add to team ")
 
 
 main()
-# header_team_invite_btn()
-# add_team_member()
+header_team_invite_btn()
+invited_member = add_team_member()
 go_to_team_members_list()
-team_members_list()
+members_list = team_members_list()
+check_invited_member_add_to_list(invited_member, members_list)
