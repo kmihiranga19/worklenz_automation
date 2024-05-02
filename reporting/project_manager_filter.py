@@ -33,9 +33,17 @@ def login():
 def reporting():
     wait.until(EC.visibility_of_element_located((By.XPATH, Xpath_locators.reporting_xpath))).click()
     wait.until(EC.visibility_of_element_located((By.XPATH, Xpath_locators.reporting_projects_xpath))).click()
-    # print(len(ul_tag))
-    # ul_tag_wait = WebDriverWait(ul_tag, 10)
-    # ul_tag_wait.until(EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))
+
+
+def project_manger_filed_check():
+    head_wrapper = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "ant-card-head-wrapper")))
+    head_wrapper_wait = WebDriverWait(head_wrapper, 10)
+    head_wrapper_wait.until(EC.visibility_of_element_located((By.TAG_NAME, "button")))
+    wait.until(EC.visibility_of_element_located((By.XPATH, Xpath_locators.show_filed_xpath)))
+
+    # wait.until(EC.visibility_of_element_located((By.CLASS_NAME, Class_locators.show_filed_ul)))
+    # time.sleep(1)
 
 
 main()
+project_manger_filed_check()
