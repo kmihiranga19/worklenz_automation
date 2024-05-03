@@ -41,8 +41,8 @@ def project_manger_filed_check():
     head_wrapper_wait.until(EC.visibility_of_element_located((By.TAG_NAME, "button")))
     wait.until(EC.visibility_of_element_located((By.XPATH, Xpath_locators.show_filed_xpath)))
 
-    # wait.until(EC.visibility_of_element_located((By.CLASS_NAME, Class_locators.show_filed_ul)))
-    # time.sleep(1)
+    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, Class_locators.show_filed_ul)))
+    time.sleep(1)
 
 
 main()
