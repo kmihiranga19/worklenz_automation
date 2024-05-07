@@ -45,6 +45,7 @@ def project_manger_filed_check():
     show_filed_items_menu_wait = WebDriverWait(show_filed_items_menu, 10)
     manger_checkbox = show_filed_items_menu_wait.until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "ant-dropdown-menu-item")))[-1]
     manger_checkbox_class_name = manger_checkbox.get_attribute("class")
+
     if "ant-checkbox-wrapper-checked" not in manger_checkbox_class_name:
         manger_checkbox.click()
 
@@ -53,13 +54,13 @@ def project_manger_filed_check():
 
 
 def get_project_mangers_projects():
-    managers_details = []
+    projects_details = []
 
     table = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "tbody")))
     time.sleep(2)
     rows = table.find_elements(By.TAG_NAME, "tr")
     for index, row in enumerate(rows):
-        manager_details = {
+        project_details = {
             "project_name": "",
             "project_manager_name": ""
         }
@@ -67,18 +68,18 @@ def get_project_mangers_projects():
             continue
         project_name = row.find_elements(By.TAG_NAME, "td")[0].text
         manager_name = row.find_elements(By.TAG_NAME, "td")[-1].text
-        manager_details["project_name"] = project_name
-        manager_details["project_manager_name"] = manager_name
-        managers_details.append(manager_details)
+        project_details["project_name"] = project_name
+        project_details["project_manager_name"] = manager_name
+        projects_details.append(project_details)
         time.sleep(1)
 
-    print(managers_details)
+    print(projects_details)
 
 
 def filter_project_manager():
     head_wrapper = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "ant-card-head-wrapper")))
     head_wrapper_wait = WebDriverWait(head_wrapper, 10)
-    button = head_wrapper_wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, "button")))[4]
+    button = head_wrapper_wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, "button")))[3]
     button_wait = WebDriverWait(button, 10)
     button_wait.until(EC.visibility_of_all_elements_located((By.TAG_NAME, "span")))[1].click()
     drop_down_menu = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "ant-dropdown-menu-vertical")))
@@ -87,7 +88,31 @@ def filter_project_manager():
     project_manger.click()
 
 
+def get_projects_after_filtering():
+    filter_projects_details = []
+
+    table = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "tbody")))
+    time.sleep(2)
+    rows = table.find_elements(By.TAG_NAME, "tr")
+    for index, row in enumerate(rows):
+        project_details = {
+            "project_name": "",
+            "project_manager_name": ""
+        }
+        if index == 0:
+            continue
+        project_name = row.find_elements(By.TAG_NAME, "td")[0].text
+        manager_name = row.find_elements(By.TAG_NAME, "td")[-1].text
+        project_details["project_name"] = project_name
+        project_details["project_manager_name"] = manager_name
+        filter_projects_details.append(project_details)
+        time.sleep(1)
+
+    print(filter_projects_details)
+
+
 main()
 project_manger_filed_check()
 get_project_mangers_projects()
 filter_project_manager()
+get_projects_after_filtering()
