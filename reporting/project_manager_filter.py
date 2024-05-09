@@ -56,7 +56,7 @@ def project_manger_filed_check():
         button.click()
 
 
-def filter_project_manager():
+def get_filtering_project_manager():
     not_need_span = '<input type="checkbox" class="ant-checkbox-input ng-untouched ng-pristine ng-valid"><span class="ant-checkbox-inner"></span>'
     head_wrapper = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "ant-card-head-wrapper")))
     head_wrapper_wait = WebDriverWait(head_wrapper, 10)
@@ -77,7 +77,7 @@ def filter_project_manager():
             return project_manager_name.strip()
 
 
-def get_project_mangers_projects(filtered_manager_name):
+def get_project_manager_projects(filtered_manager_name):
     projects_details = []
 
     table = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "tbody")))
@@ -104,11 +104,18 @@ def get_project_mangers_projects(filtered_manager_name):
                 projects_details.append(project_details)
         time.sleep(1)
 
-    print(projects_details)
+    return projects_details
+
+
+def filtering_project_manager():
+    drop_down_menu = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "ant-dropdown-menu-vertical")))
+    drop_down_menu_wait = WebDriverWait(drop_down_menu, 20)
+    select_project_manger = drop_down_menu_wait.until(EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))[1]
+    select_project_manger.click()
 
 
 def get_projects_after_filtering():
-    filter_projects_details = []
+    filtered_projects_details = []
 
     table = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "tbody")))
     time.sleep(2)
@@ -121,17 +128,36 @@ def get_projects_after_filtering():
         if index == 0:
             continue
         project_name = row.find_elements(By.TAG_NAME, "td")[0].text
-        manager_name = row.find_elements(By.TAG_NAME, "td")[-1].text
+        manager_cell = row.find_elements(By.TAG_NAME, "td")[-1]
+        manager_name = manager_cell.find_elements(By.TAG_NAME, "span")[1].text
         project_details["project_name"] = project_name
         project_details["project_manager_name"] = manager_name
-        filter_projects_details.append(project_details)
+        filtered_projects_details.append(project_details)
         time.sleep(1)
 
-    print(filter_projects_details)
+    return filtered_projects_details
+
+
+def check_filter_work_correctly(p_manager_projects, p_filtered_projects):
+    for p_manager_project in p_manager_projects:
+        for p_filtered_project in p_filtered_projects:
+            manager_projects_name = p_manager_project["project_name"]
+            manager_projects_manager_name = p_manager_project["project_manager_name"]
+            filtered_projects_name = p_filtered_project["project_name"]
+            filtered_projects_manager_name = p_filtered_project["project_manager_name"]
+
+            if (manager_projects_name.strip() == filtered_projects_name.strip()) & (
+                    manager_projects_manager_name.strip() == filtered_projects_manager_name.strip()):
+                print(f'{manager_projects_name} successfully filtered')
+            else:
+                print("Filter not working correctly")
+
 
 
 main()
 project_manger_filed_check()
-filtered_manger_name = filter_project_manager()
-get_project_mangers_projects(filtered_manger_name)
-# get_projects_after_filtering()
+filtered_manger_name = get_filtering_project_manager()
+manager_projects = get_project_manager_projects(filtered_manger_name)
+filtering_project_manager()
+filtered_projects = get_projects_after_filtering()
+check_filter_work_correctly(manager_projects, filtered_projects)
