@@ -7,26 +7,26 @@ from selenium.webdriver.support import expected_conditions as EC
 from reporting.locators import Xpath_locators
 from reporting.locators import Class_locators
 import time
+import reporting.constands as const
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option("detach", True)
 driver = webdriver.Chrome(options=options)
 wait = WebDriverWait(driver, 10)
 
-driver.get("https://uat.app.worklenz.com/auth")
+driver.get(const.baseURL)
 driver.maximize_window()
 
 
 def main():
-    login()
+    login("hifowos660@losvtn.com", "ceyDigital#00")
     reporting()
 
 
-def login():
-    wait.until(EC.visibility_of_element_located((By.XPATH, Xpath_locators.email_xpath))).send_keys(
-        "ncsdn@v.com")
+def login(email, password):
+    wait.until(EC.visibility_of_element_located((By.XPATH, Xpath_locators.email_xpath))).send_keys(email)
     wait.until(EC.visibility_of_element_located((By.XPATH, Xpath_locators.password_xpath))).send_keys(
-        "ceyDigital#00")
+        password)
     wait.until(EC.visibility_of_element_located((By.XPATH, Xpath_locators.login_btn_xpath))).click()
 
 
@@ -139,19 +139,19 @@ def get_projects_after_filtering():
 
 
 def check_filter_work_correctly(p_manager_projects, p_filtered_projects):
-    for p_manager_project in p_manager_projects:
-        for p_filtered_project in p_filtered_projects:
-            manager_projects_name = p_manager_project["project_name"]
-            manager_projects_manager_name = p_manager_project["project_manager_name"]
-            filtered_projects_name = p_filtered_project["project_name"]
-            filtered_projects_manager_name = p_filtered_project["project_manager_name"]
+    result = True
+    if len(p_manager_projects) != len(p_filtered_projects):
+        return False
 
-            if (manager_projects_name.strip() == filtered_projects_name.strip()) & (
-                    manager_projects_manager_name.strip() == filtered_projects_manager_name.strip()):
-                print(f'{manager_projects_name} successfully filtered')
-            else:
-                print("Filter not working correctly")
+    for item1, item2 in zip(p_manager_projects, p_filtered_projects):
 
+        if item1 != item2:
+            return False
+
+    if result:
+        print("Project manager filter is working")
+    else:
+        print("Project manager filter not working")
 
 
 main()

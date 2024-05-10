@@ -1,0 +1,1 @@
+baseURL = "https://uat.app.worklenz.com/auth"
