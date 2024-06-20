@@ -10,7 +10,7 @@ class Test_login:
     def setup_method(self):
         options = webdriver.ChromeOptions()
         options.add_experimental_option("detach", True)
-        self.driver = webdriver.Chrome(options=options)
+        self.driver = webdriver.Chrome()
         self.wait = WebDriverWait(self.driver, 20)
         self.driver.get("https://uat.app.worklenz.com/auth/login")
         self.driver.maximize_window()
@@ -28,6 +28,8 @@ class Test_login:
         except NoSuchElementException:
             pytest.fail("Test case fail: Verify user unable login with correct credentials")
 
+        self.driver.quit()
+
     def test_verify_unable_login_with_invalid_email(self):
         self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='Email']"))).send_keys(
             "ceyare4516mliok")
@@ -42,6 +44,8 @@ class Test_login:
         except NoSuchElementException:
             pytest.fail("Test case fail: Verify user able login with invalid email")
 
+        self.driver.quit()
+
     def test_verify_unable_login_with_invalid_password(self):
         self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='Email']"))).send_keys(
             "ceyare4516@mliok")
@@ -54,6 +58,8 @@ class Test_login:
         except NoSuchElementException:
             pytest.fail("Test case fail: Verify user able login with invalid password")
 
+        self.driver.quit()
+
     def test_verify_unable_login_with_wrong_credentials(self):
         self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='Email']"))).send_keys(
             "ceyare4516@mliok.com")
@@ -62,9 +68,10 @@ class Test_login:
         self.wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='Log in']"))).click()
 
         try:
-            self.wait.until(
-                EC.visibility_of_element_located((By.XPATH, "//div[normalize-space()='Login failed!']")))
+            self.wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='Log in']")))
         except NoSuchElementException:
             pytest.fail("Test case fail: Verify user able login with wrong password")
+
+        self.driver.quit()
 
 
