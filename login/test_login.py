@@ -15,12 +15,13 @@ class Test_login:
         self.driver.get("https://uat.app.worklenz.com/auth/login")
         self.driver.maximize_window()
 
-    def test_verify_able_login_with_credentials(self):
-        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='Email']"))).send_keys(
-            "ceyare4516@mliok.com")
-        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='Password']"))).send_keys(
-            "ceyDigital#00")
+    def enter_credentials(self, email, password):
+        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='Email']"))).send_keys(email)
+        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='Password']"))).send_keys(password)
         self.wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='Log in']"))).click()
+
+    def test_verify_able_login_with_credentials(self):
+        self.enter_credentials("ceyare4516@mliok.com", "ceyDigital#00")
 
         try:
             self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "logo-holder")))
@@ -31,11 +32,7 @@ class Test_login:
         self.driver.quit()
 
     def test_verify_unable_login_with_invalid_email(self):
-        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='Email']"))).send_keys(
-            "ceyare4516mliok")
-        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='Password']"))).send_keys(
-            "ceyDigital#00")
-        self.wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='Log in']"))).click()
+        self.enter_credentials("ce4516.com", "ceyDigital#00")
 
         try:
             self.wait.until(
@@ -47,9 +44,7 @@ class Test_login:
         self.driver.quit()
 
     def test_verify_unable_login_with_invalid_password(self):
-        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='Email']"))).send_keys(
-            "ceyare4516@mliok")
-        self.wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='Log in']"))).click()
+        self.enter_credentials("ceyare4516@mliok.com", "")
 
         try:
             self.wait.until(
@@ -61,11 +56,7 @@ class Test_login:
         self.driver.quit()
 
     def test_verify_unable_login_with_wrong_credentials(self):
-        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='Email']"))).send_keys(
-            "ceyare4516@mliok.com")
-        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='Password']"))).send_keys(
-            "ceyDigital")
-        self.wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='Log in']"))).click()
+        self.enter_credentials("ceyare4516@mliok.com", "ceyDigital")
 
         try:
             self.wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='Log in']")))
