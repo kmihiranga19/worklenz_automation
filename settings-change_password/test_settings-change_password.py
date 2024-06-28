@@ -9,6 +9,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 class Test_change_password:
+    faker = Faker()
+    no = faker.random_int()
 
     def setup_method(self):
         options = webdriver.ChromeOptions()
@@ -42,8 +44,7 @@ class Test_change_password:
             pytest.fail("Test case fail: Verify change password page")
 
     def test_verify_user_able_change_password(self):
-        faker = Faker()
-        no = faker.number()
+
         current_password = 'ceyDigital#03'
         new_password = 'ceyDigital#' + no
         print(new_password)
