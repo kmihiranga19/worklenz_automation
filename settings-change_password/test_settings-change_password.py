@@ -32,8 +32,30 @@ class Test_change_password:
 
         return password
 
+    def change_password(self, current_psw, new_psw, new_current_psw):
+        self.wait.until(EC.visibility_of_element_located(
+            (By.CSS_SELECTOR, "input[placeholder='Enter your current password']"))).send_keys(current_psw)
+        self.wait.until(
+            EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='New Password']"))).send_keys(
+            new_psw)
+        self.wait.until(
+            EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='Confirm New Password']"))).send_keys(
+            new_current_psw)
+        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "button[type='submit']"))).click()
+
+    def account_log_out(self):
+        wl_header = self.wait.until(EC.visibility_of_element_located((By.TAG_NAME, "worklenz-header")))
+        wl_header_wait = WebDriverWait(wl_header, 10)
+        left_header = wl_header_wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "top-nav-ul-secondary")))
+        left_header_wait = WebDriverWait(left_header, 10)
+        left_header_wait.until(EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))[-1].click()
+        drop_down = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "profile-details-dropdown")))
+        drop_down_wait = WebDriverWait(drop_down, 10)
+        drop_down_wait.until(EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))[2].click()
+        self.wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='OK']"))).click()
+
     def test_verify_change_password_page(self):
-        self.login("fdd@m.com", "ceyDigital#00")
+        self.login("fddf@d.com", "ceyDigital#00")
         time.sleep(5)
         self.driver.get("https://uat.app.worklenz.com/worklenz/settings/password")
         try:
@@ -46,31 +68,49 @@ class Test_change_password:
     def test_verify_user_able_change_password(self):
 
         current_password = 'ceyDigital#00'
-        new_password = 'ceyDigital#' + str(self.no)
+        new_password = 'ceyDigital#'
         self.login("fdd@m.com", current_password)
         time.sleep(5)
         self.driver.get("https://uat.app.worklenz.com/worklenz/settings/password")
-        self.wait.until(EC.visibility_of_element_located(
-            (By.CSS_SELECTOR, "input[placeholder='Enter your current password']"))).send_keys(current_password)
-        self.wait.until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='New Password']"))).send_keys(new_password)
-        self.wait.until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, "input[placeholder='Confirm New Password']"))).send_keys(
-            new_password)
-        self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "button[type='submit']"))).click()
+        self.change_password(current_password, new_password, new_password)
         current_password = new_password
-        wl_header = self.wait.until(EC.visibility_of_element_located((By.TAG_NAME, "worklenz-header")))
-        wl_header_wait = WebDriverWait(wl_header, 10)
-        left_header = wl_header_wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "top-nav-ul-secondary")))
-        left_header_wait = WebDriverWait(left_header, 10)
-        left_header_wait.until(EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))[-1].click()
-        drop_down = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "profile-details-dropdown")))
-        drop_down_wait = WebDriverWait(drop_down, 10)
-        drop_down_wait.until(EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))[2].click()
-        self.wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='OK']"))).click()
+        self.account_log_out()
         self.login("fdd@m.com", current_password)
 
         try:
-            self.wait.
+            self.wait.until(EC.visibility_of_element_located((By.XPATH, "//strong[normalize-space()='Home']")))
 
+        except NoSuchElementException:
+            pytest.fail("Test case: test verify user able change password")
 
+    def test_verify_user_unable_change_psw_with_invalid_current_psw(self):
+        wrong_current_password = 'wrongPsw00'
+        current_password = 'ceyDigital#00'
+        new_password = 'ceyDigital#18'
+        self.login("fddf@d.com", current_password)
+        time.sleep(5)
+        self.driver.get("https://uat.app.worklenz.com/worklenz/settings/password")
+        self.change_password(wrong_current_password, new_password, new_password)
+        self.account_log_out()
+        self.login("fddf@d.com", new_password)
+        try:
+            self.wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='Log in']")))
+
+        except NoSuchElementException:
+            pytest.fail("Test case: test verify user unable change psw with invalid current password")
+
+    def test_verify_user_unable_change_psw_with_invalid_confirm_new_psw(self):
+        current_password = 'ceyDigital#00'
+        new_password = 'ceyDigital#18'
+        confirm_new_password = 'ceyDigital#20'
+        self.login("fddf@d.com", current_password)
+        time.sleep(5)
+        self.driver.get("https://uat.app.worklenz.com/worklenz/settings/password")
+        self.change_password(current_password, new_password, confirm_new_password)
+        self.account_log_out()
+        self.login("fddf@d.com", new_password)
+        try:
+            self.wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='Log in']")))
+
+        except NoSuchElementException:
+            pytest.fail("Test case: test verify user unable change psw with invalid current password")
