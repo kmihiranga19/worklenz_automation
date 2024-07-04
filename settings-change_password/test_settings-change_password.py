@@ -4,11 +4,13 @@ from selenium import webdriver
 import pytest
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
 class Test_change_password:
+    faker = Faker()
+    no = faker.random_int()
 
     def setup_method(self):
         options = webdriver.ChromeOptions()
@@ -31,7 +33,7 @@ class Test_change_password:
         return password
 
     def test_verify_change_password_page(self):
-        self.login("bsdcsd@v.com", "ceyDigital#00")
+        self.login("fdd@m.com", "ceyDigital#00")
         time.sleep(5)
         self.driver.get("https://uat.app.worklenz.com/worklenz/settings/password")
         try:
@@ -42,15 +44,12 @@ class Test_change_password:
             pytest.fail("Test case fail: Verify change password page")
 
     def test_verify_user_able_change_password(self):
-        faker = Faker()
-        no = faker.number()
-        current_password = 'ceyDigital#03'
-        new_password = 'ceyDigital#' + no
-        print(new_password)
-        self.login("bsdcsd@v.com", current_password)
+
+        current_password = 'ceyDigital#00'
+        new_password = 'ceyDigital#' + str(self.no)
+        self.login("fdd@m.com", current_password)
         time.sleep(5)
         self.driver.get("https://uat.app.worklenz.com/worklenz/settings/password")
-
         self.wait.until(EC.visibility_of_element_located(
             (By.CSS_SELECTOR, "input[placeholder='Enter your current password']"))).send_keys(current_password)
         self.wait.until(
@@ -62,7 +61,16 @@ class Test_change_password:
         current_password = new_password
         wl_header = self.wait.until(EC.visibility_of_element_located((By.TAG_NAME, "worklenz-header")))
         wl_header_wait = WebDriverWait(wl_header, 10)
-        left_header = wl_header_wait.until(EC.visibility_of_element_located((By.TAG_NAME, "ul")))[1]
+        left_header = wl_header_wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "top-nav-ul-secondary")))
         left_header_wait = WebDriverWait(left_header, 10)
-        left_header_wait.until(EC.visibility_of_element_located((By.TAG_NAME, "li")))[-1].click()
+        left_header_wait.until(EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))[-1].click()
+        drop_down = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "profile-details-dropdown")))
+        drop_down_wait = WebDriverWait(drop_down, 10)
+        drop_down_wait.until(EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))[2].click()
+        self.wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='OK']"))).click()
+        self.login("fdd@m.com", current_password)
+
+        try:
+            self.wait.
+
 
