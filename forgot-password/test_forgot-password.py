@@ -52,7 +52,8 @@ class Test_forgot_password:
         self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "input[id='password']"))).send_keys("ceyDigital#00")
         self.wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='Sign up']"))).click()
         self.wait.until(EC.visibility_of_element_located((By.TAG_NAME, 'input'))).send_keys("Project")
-        self.wait.until(EC.visibility_of_element_located(By.XPATH, ""))
+        self.wait.until(EC.visibility_of_element_located((By.XPATH, "//span[normalize-space()='Import from templates']"))).click()
+        self.wait.until(EC.visibility_of_element_located((By.XPATH, "(//button[@class='ant-btn ant-btn-primary'])"))).click()
 
     def test_b(self):
         self.create_new_user_account()
